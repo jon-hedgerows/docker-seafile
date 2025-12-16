@@ -10,4 +10,6 @@ test -d $(dirname $SEAHUBSETTINGS) || mkdir -p $(dirname $SEAHUBSETTINGS)
 if ! test -f $SEAHUBSETTINGS; then
     cat seahub_settings.py \
     | sed 's/[[seafile-google-client-id]]/$CLIENTID/g' \
-    | sed 's/[[seafile-google-client-secret]/$CLIENTSECRET/g' > $SEAHUBSETTINGS
+    | sed 's/[[seafile-google-client-secret]/$CLIENTSECRET/g' \
+        > $SEAHUBSETTINGS
+fi
