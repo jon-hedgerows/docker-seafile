@@ -48,6 +48,8 @@ services:
     #   - 80:80
     volumes:
       - ${SEAFILE_VOLUME:-/opt/seafile-data}:/shared
+    devices:
+      - /dev/dri:/dev/dri
     environment:
       - SEAFILE_MYSQL_DB_HOST=${SEAFILE_MYSQL_DB_HOST:-db}
       - SEAFILE_MYSQL_DB_PORT=${SEAFILE_MYSQL_DB_PORT:-3306}

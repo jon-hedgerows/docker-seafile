@@ -16,3 +16,8 @@ docker config for Seafile
 ## seahub_settings.py
 
 - adjust this to configure oauth2
+
+## links for the Links section
+
+- https://seafile.hedgerows.org.uk/
+- https://manual.seafile.com/latest/config/
