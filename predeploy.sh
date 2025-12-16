@@ -3,14 +3,14 @@
 # read the docker environment vars
 source .env
 
-# update SEAHUBSETTINGS to point to the seahub_settings file - this must match the environment above
-SEAHUBSETTINGS=$SEAFILE_VOLUME/seafile/conf/seahub_settings.py
+# update SEAHUBSETTINGS to point to the seahub_settings file
+SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
 
 # make the path if required
-test -d $(dirname $SEAHUBSETTINGS) || mkdir -p $(dirname $SEAHUBSETTINGS)
+mkdir -p ${SEAFILE_VOLUME}/seafile/conf
 
 # if the settings file does not contain an ENABLE_OAUTH stanza, then pre-seed with OAUTH settings
-grep -q "ENABLE_OAUTH = True" $SEAHUBSETTINGS 2>/dev/null || cat >> $SEAHUBSETTINGS <<__EOF
+grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null || cat >> ${SEAHUBSETTINGS} <<__EOF
 ENABLE_OAUTH = True
 
 # If create new user when he/she logs in Seafile for the first time, defalut `True`.
@@ -46,8 +46,3 @@ OAUTH_ATTRIBUTE_MAP = {
     "email": (False, "contact_email"),
 }
 __EOF
-
-#debug
-set
-
-cat $SEAHUBSETTINGS
