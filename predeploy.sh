@@ -5,8 +5,6 @@ source .env
 
 # update SEAHUBSETTINGS to point to the seahub_settings file - this must match the environment above
 SEAHUBSETTINGS=$SEAFILE_VOLUME/seafile/conf/seahub_settings.py
-CLIENTID="$1"
-CLIENTSECRET="$2"
 
 # make the path if required
 test -d $(dirname $SEAHUBSETTINGS) || mkdir -p $(dirname $SEAHUBSETTINGS)
@@ -51,3 +49,5 @@ __EOF
 
 #debug
 set
+
+cat $SEAHUBSETTINGS
