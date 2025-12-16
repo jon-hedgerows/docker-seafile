@@ -1,3 +1,5 @@
+#!/bin/bash -x
+
 # update SEAHUBSETTINGS to point to the seahub_settings file - this must match the environment above
 SEAHUBSETTINGS=/srv/volumes/seafile/seafile-data/seafile/conf/seahub_settings.py
 CLIENTID="$1"
@@ -13,3 +15,5 @@ if ! test -f $SEAHUBSETTINGS; then
     | sed 's/[[seafile-google-client-secret]/$CLIENTSECRET/g' \
         > $SEAHUBSETTINGS
 fi
+
+set
