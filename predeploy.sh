@@ -10,7 +10,7 @@ SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
 mkdir -p ${SEAFILE_VOLUME}/seafile/conf
 
 # if the settings file does not contain an ENABLE_OAUTH stanza, then pre-seed with OAUTH settings
-grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null || cat >> ${SEAHUBSETTINGS} <<__EOF
+grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null || cat >> ${SEAHUBSETTINGS} << __EOF
 ENABLE_OAUTH = True
 
 # If create new user when he/she logs in Seafile for the first time, defalut `True`.
