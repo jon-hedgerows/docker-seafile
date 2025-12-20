@@ -46,3 +46,16 @@ OAUTH_ATTRIBUTE_MAP = {
     "email": (False, "contact_email"),
 }
 __EOF
+
+# configure email
+grep -q "EMAIL_HOST = " ${SEAHUBSETTINGS} 2>/dev/null || cat >> ${SEAHUBSETTINGS}  << __EOF_EMAIL
+
+# email settings
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'mail.home.hedgerows.org.uk'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'seafile@hedgerows.org.uk'
+SERVER_EMAIL = 'seafile@hedgerows.org.uk'
+__EOF_EMAIL
