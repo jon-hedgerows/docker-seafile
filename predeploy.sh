@@ -11,15 +11,16 @@ if test -z "$SEAFILE_VOLUME" ; then
     exit 1
 fi
 
+
 # make the automounter mount the volume (if required)
 ls ${SEAFILE_VOLUME} > /dev/null 2> /dev/null
 
 function makedir() {
-    if test ! -x "$1" ; then
-        echo "creating: $1"
-        mkdir -p "$1"
+    if test ! -x "/host/$1" ; then
+        echo "creating: $1 on /host"
+        mkdir -p "/host/$1"
     else
-        echo "exists: $1"
+        echo "exists: $1 on /host"
     fi
 }
 
@@ -31,7 +32,7 @@ makedir "${SEAFILE_CADDY_VOLUME}"
 makedir "${SEADOC_VOLUME}"
 
 # update SEAHUBSETTINGS to point to the seahub_settings file
-SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
+SEAHUBSETTINGS=/host/${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
 
 # if the settings file does not contain an ENABLE_OAUTH stanza, then pre-seed with OAUTH settings
 if ! grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null ; then
