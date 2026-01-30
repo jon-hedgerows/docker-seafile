@@ -3,14 +3,26 @@
 # read the docker environment vars
 source .env
 
+if test -z "SEAFILE_VOLUME" ; then
+    echo SEAFILE_VOLUME not set
+    exit 1
+fi
+
+# make the automounter mount the volume (if required)
+ls ${SEAFILE_VOLUME} > /dev/null
+
+# make data paths if needed
+test ! -x "${SEADOC_VOLUME}" && mkdir -p ${SEAFILE_VOLUME}/seafile/conf
+test ! -x "${SEAFILE_MYSQL_VOLUME}" && mkdir -p ${SEAFILE_MYSQL_VOLUME}
+test ! -x "${SEAFILE_CADDY_VOLUME}" && mkdir -p ${SEAFILE_CADDY_VOLUME}
+test ! -x "${SEADOC_VOLUME}" && mkdir -p ${SEADOC_VOLUME}
+
 # update SEAHUBSETTINGS to point to the seahub_settings file
 SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
 
-# make the path if required
-mkdir -p ${SEAFILE_VOLUME}/seafile/conf
-
 # if the settings file does not contain an ENABLE_OAUTH stanza, then pre-seed with OAUTH settings
-grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null || cat >> ${SEAHUBSETTINGS} << __EOF
+if ! grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null ; then
+    cat >> ${SEAHUBSETTINGS} << __EOF
 ENABLE_OAUTH = True
 
 # If create new user when he/she logs in Seafile for the first time, defalut `True`.
@@ -46,9 +58,11 @@ OAUTH_ATTRIBUTE_MAP = {
     "email": (False, "contact_email"),
 }
 __EOF
+fi
 
 # configure email
-grep -q "EMAIL_HOST = " ${SEAHUBSETTINGS} 2>/dev/null || cat >> ${SEAHUBSETTINGS}  << __EOF_EMAIL
+if ! grep -q "EMAIL_HOST = " ${SEAHUBSETTINGS} 2>/dev/null ; then
+    cat >> ${SEAHUBSETTINGS}  << __EOF_EMAIL
 
 # email settings
 EMAIL_USE_TLS = True
@@ -59,3 +73,4 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = 'seafile@hedgerows.org.uk'
 SERVER_EMAIL = 'seafile@hedgerows.org.uk'
 __EOF_EMAIL
+fi
