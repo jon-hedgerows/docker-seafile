@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # read the docker environment vars
 source .env
