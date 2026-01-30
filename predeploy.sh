@@ -1,6 +1,9 @@
 #!/bin/bash
 
+echo $0 running on $(hostname -f)
+
 # read the docker environment vars
+echo reading environment from .env, $(cat .env | wc -l) lines
 source .env
 
 if test -z "$SEAFILE_VOLUME" ; then
