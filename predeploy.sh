@@ -11,11 +11,21 @@ fi
 # make the automounter mount the volume (if required)
 ls ${SEAFILE_VOLUME} > /dev/null 2> /dev/null
 
+function makedir() {
+    if test ! -x "$1" ; then
+        echo "creating: $1"
+        mkdir -p "$1"
+    else
+        echo "exists: $1"
+    fi
+}
+
+
 # make data paths if needed
-test ! -x "${SEAFILE_VOLUME}" && mkdir -p ${SEAFILE_VOLUME}/seafile/conf
-test ! -x "${SEAFILE_MYSQL_VOLUME}" && mkdir -p ${SEAFILE_MYSQL_VOLUME}
-test ! -x "${SEAFILE_CADDY_VOLUME}" && mkdir -p ${SEAFILE_CADDY_VOLUME}
-test ! -x "${SEADOC_VOLUME}" && mkdir -p ${SEADOC_VOLUME}
+makedir "${SEAFILE_VOLUME}/seafile/conf"
+makedir "${SEAFILE_MYSQL_VOLUME}"
+makedir "${SEAFILE_CADDY_VOLUME}" 
+makedir "${SEADOC_VOLUME}"
 
 # update SEAHUBSETTINGS to point to the seahub_settings file
 SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
@@ -23,6 +33,7 @@ SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
 # if the settings file does not contain an ENABLE_OAUTH stanza, then pre-seed with OAUTH settings
 if ! grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null ; then
 
+echo "adding oauth config to ${SEAHUBSETTINGS}"
 cat << __EOF >> ${SEAHUBSETTINGS} 
 ENABLE_OAUTH = True
 
@@ -60,11 +71,16 @@ OAUTH_ATTRIBUTE_MAP = {
 }
 __EOF
 
+else
+
+echo "oauth config found in ${SEAHUBSETTINGS}"
+
 fi
 
 # configure email
 if ! grep -q "EMAIL_HOST = " ${SEAHUBSETTINGS} 2>/dev/null ; then
 
+echo "adding email config to ${SEAHUBSETTINGS}"
 cat << __EOF_EMAIL >> ${SEAHUBSETTINGS}
 
 # email settings
@@ -76,5 +92,9 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = 'seafile@hedgerows.org.uk'
 SERVER_EMAIL = 'seafile@hedgerows.org.uk'
 __EOF_EMAIL
+
+else
+
+echo "email config found in ${SEAHUBSETTINGS}"
 
 fi
