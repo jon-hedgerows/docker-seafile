@@ -3,7 +3,7 @@
 # read the docker environment vars
 source .env
 
-if test -z "SEAFILE_VOLUME" ; then
+if test -z "$SEAFILE_VOLUME" ; then
     echo SEAFILE_VOLUME not set
     exit 1
 fi
@@ -22,7 +22,8 @@ SEAHUBSETTINGS=${SEAFILE_VOLUME}/seafile/conf/seahub_settings.py
 
 # if the settings file does not contain an ENABLE_OAUTH stanza, then pre-seed with OAUTH settings
 if ! grep -q "ENABLE_OAUTH = True" ${SEAHUBSETTINGS} 2>/dev/null ; then
-    cat >> ${SEAHUBSETTINGS} << __EOF
+
+cat >> ${SEAHUBSETTINGS} << __EOF
 ENABLE_OAUTH = True
 
 # If create new user when he/she logs in Seafile for the first time, defalut `True`.
@@ -62,7 +63,8 @@ fi
 
 # configure email
 if ! grep -q "EMAIL_HOST = " ${SEAHUBSETTINGS} 2>/dev/null ; then
-    cat >> ${SEAHUBSETTINGS}  << __EOF_EMAIL
+
+cat >> ${SEAHUBSETTINGS}  << __EOF_EMAIL
 
 # email settings
 EMAIL_USE_TLS = True
