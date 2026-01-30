@@ -1,5 +1,5 @@
 services:
-  db:
+  seafile-mysql:
     image: ${SEAFILE_DB_IMAGE:-mariadb:10.11}
     container_name: seafile-mysql
     restart: unless-stopped
@@ -14,12 +14,11 @@ services:
     networks:
       - seafile-net
     healthcheck:
-      test:
-        [
+      test: [
           "CMD",
           "/usr/local/bin/healthcheck.sh",
           "--connect",
-          "--mariadbupgrade",
+          # "--mariadbupgrade",
           "--innodb_initialized",
         ]
       interval: 20s
@@ -27,7 +26,7 @@ services:
       timeout: 5s
       retries: 10
 
-  redis:
+  seafile-redis:
     image: ${SEAFILE_REDIS_IMAGE:-redis}
     container_name: seafile-redis
     restart: unless-stopped
@@ -90,9 +89,9 @@ services:
       traefik.http.routers.logs.tls.certresolver: letsencrypt
       traefik.http.services.logs.loadbalancer.server.port: 80
     depends_on:
-      db:
+      seafile-mysql:
         condition: service_healthy
-      redis:
+      seafile-redis:
         condition: service_started
     networks:
       - seafile-net
@@ -123,7 +122,7 @@ services:
 #      traefik.http.routers.logs.tls.certresolver: letsencrypt
 #      traefik.http.services.logs.loadbalancer.server.port: 8083
 #    depends_on:
-#      db:
+#      seafile-mysql:
 #        condition: service_healthy
 #    networks:
 #      - seafile-net
