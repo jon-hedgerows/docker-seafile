@@ -48,8 +48,8 @@ services:
     volumes:
       - ${SEAFILE_VOLUME:-/opt/seafile-data}:/shared
     environment:
-      - SEAFILE_MYSQL_DB_HOST=${SEAFILE_MYSQL_DB_HOST:-db}
-      - SEAFILE_MYSQL_DB_PORT=${SEAFILE_MYSQL_DB_PORT:-3306}
+      - SEAFILE_MYSQL_DB_HOST=seafile-mysql
+      - SEAFILE_MYSQL_DB_PORT=3306
       - SEAFILE_MYSQL_DB_USER=${SEAFILE_MYSQL_DB_USER:-seafile}
       - SEAFILE_MYSQL_DB_PASSWORD=${SEAFILE_MYSQL_DB_PASSWORD:?Variable is not set or empty}
       - INIT_SEAFILE_MYSQL_ROOT_PASSWORD=${INIT_SEAFILE_MYSQL_ROOT_PASSWORD:-}
@@ -68,11 +68,11 @@ services:
       - ENABLE_SEADOC=${ENABLE_SEADOC:-true}
       - SEADOC_SERVER_URL=${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}/sdoc-server
       - CACHE_PROVIDER=${CACHE_PROVIDER:-redis}
-      - REDIS_HOST=${REDIS_HOST:-redis}
-      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_HOST=seafile-redis
+      - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-      - MEMCACHED_HOST=${MEMCACHED_HOST:-memcached}
-      - MEMCACHED_PORT=${MEMCACHED_PORT:-11211}
+      - MEMCACHED_HOST=seafile-memcached
+      - MEMCACHED_PORT=11211
       - ENABLE_NOTIFICATION_SERVER=${ENABLE_NOTIFICATION_SERVER:-false}
       - INNER_NOTIFICATION_SERVER_URL=${INNER_NOTIFICATION_SERVER_URL:-http://notification-server:8083}
       - NOTIFICATION_SERVER_URL=${NOTIFICATION_SERVER_URL:-${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}/notification}
@@ -83,11 +83,12 @@ services:
     labels:
       # caddy: ${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}
       # caddy.reverse_proxy: "{{upstreams 80}}"
-      traefik.http.routers.logs.rule: Host(`${SEAFILE_SERVER_HOSTNAME}`) || Host(`seafile.home.hedgerows.org.uk`) # && ! PathPrefix(`/notification`)
-      traefik.http.routers.logs.entrypoints: https
-      traefik.http.routers.logs.tls: true
-      traefik.http.routers.logs.tls.certresolver: letsencrypt
-      traefik.http.services.logs.loadbalancer.server.port: 80
+      traefik.http.routers.seafile.rule: Host(`${SEAFILE_SERVER_HOSTNAME}`) || Host(`seafile.home.hedgerows.org.uk`) || Host(`seafile.app.hedgerows.org.uk`) # && ! PathPrefix(`/notification`)
+      traefik.http.routers.seafile.service: seafile
+      traefik.http.routers.seafile.entrypoints: https
+      traefik.http.routers.seafile.tls: true
+      traefik.http.routers.seafile.tls.certresolver: letsencrypt
+      traefik.http.services.seafile.loadbalancer.server.port: 80
     depends_on:
       seafile-mysql:
         condition: service_healthy
